@@ -34,7 +34,7 @@ export function FileDropZone() {
         }
       `}
     >
-      <input {...getInputProps()} />
+      <input {...getInputProps()} aria-label="Upload audio file" />
       {!currentTrack && (
         <div className="text-center pointer-events-none select-none">
           <div className="mb-4 flex justify-center">

@@ -32,7 +32,7 @@ export function MainPage() {
 
   return (
     <div {...getRootProps()} className="fixed inset-0 overflow-hidden bg-black">
-      <input {...getInputProps()} />
+      <input {...getInputProps()} aria-label="Drop zone for audio files" />
 
       {/* Layer 0: Full-screen canvas */}
       <VisualizerCanvas />
@@ -92,6 +92,7 @@ export function MainPage() {
                 type="button"
                 onClick={unload}
                 title="Close player"
+                aria-label="Close player"
                 className="absolute -top-2.5 -right-2.5 z-10 w-6 h-6 flex items-center justify-center rounded-full bg-gray-900/90 border border-white/20 text-white/50 hover:text-white hover:border-white/50 transition-all"
               >
                 <X size={10} />

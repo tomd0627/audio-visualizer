@@ -16,6 +16,7 @@ function CtrlBtn({ onClick, title, children, large, className = '' }: ButtonProp
       type="button"
       onClick={onClick}
       title={title}
+      aria-label={title}
       className={`
         flex items-center justify-center rounded-full transition-all duration-150
         text-white hover:scale-110 active:scale-95
