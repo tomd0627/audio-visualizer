@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="8" fill="#0a0600"/>
+  <!-- Audio bars: 5 bars of varying heights centered -->
+  <rect x="4"  y="18" width="4" height="10" rx="2" fill="#ff6b00"/>
+  <rect x="10" y="12" width="4" height="16" rx="2" fill="#ff6b00"/>
+  <rect x="16" y="6"  width="4" height="22" rx="2" fill="#ff6b00" opacity="1"/>
+  <rect x="22" y="12" width="4" height="16" rx="2" fill="#ff6b00"/>
+  <rect x="28" y="18" width="4" height="10" rx="2" fill="#ff6b00"/>
+</svg>
