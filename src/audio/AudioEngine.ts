@@ -104,6 +104,12 @@ class AudioEngine {
   isMuted(): boolean {
     return this._isMuted
   }
+
+  suspend(): void {
+    if (this.ctx?.state === 'running') {
+      void this.ctx.suspend()
+    }
+  }
 }
 
 export const audioEngine = new AudioEngine()

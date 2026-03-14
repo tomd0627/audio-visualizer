@@ -1,9 +1,12 @@
+import type { CanvasTheme } from '../../themes/themes'
+
 export function drawBarSpectrum(
   ctx: CanvasRenderingContext2D,
   freqData: Uint8Array,
   width: number,
   height: number,
   sensitivity: number,
+  theme: CanvasTheme,
 ): void {
   const BAR_COUNT = 80
   const binCount = freqData.length
@@ -39,18 +42,11 @@ export function drawBarSpectrum(
 
     if (barHeight < 1) continue
 
-    // Color: cyan at base → purple at top, with glow
-    const t = avg / 255
-    const r = 255
-    const g = Math.round(t * 229 + (1 - t) * 61)
-    const b2 = Math.round(t * 102)
-    const color = `rgb(${r},${g},${b2})`
-
-    ctx.shadowColor = color
+    ctx.shadowColor = theme.shadowColor
 
     const grad = ctx.createLinearGradient(0, height, 0, height - barHeight)
-    grad.addColorStop(0, `rgba(255, 61, 0, 0.9)`)
-    grad.addColorStop(1, `rgba(255, 229, 102, 0.9)`)
+    grad.addColorStop(0, theme.gradBottom)
+    grad.addColorStop(1, theme.gradTop)
     ctx.fillStyle = grad
 
     const x = i * (barWidth + gap)

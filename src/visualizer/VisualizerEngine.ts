@@ -1,5 +1,7 @@
 import { audioEngine } from '../audio/AudioEngine'
 import type { VisualizerMode } from '../audio/types'
+import { THEMES } from '../themes/themes'
+import type { CanvasTheme } from '../themes/themes'
 import { drawAurora } from './modes/Aurora'
 import { drawBarSpectrum } from './modes/BarSpectrum'
 import { drawCircularWave } from './modes/CircularWave'
@@ -19,11 +21,14 @@ class VisualizerEngine {
   private mode: VisualizerMode = 'bars'
   private rotation = 0
   private sensitivity = 1.0
+  private canvasTheme: CanvasTheme = THEMES.solar.canvas
+  private isMobile = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
+  private active = false
 
   // Cross-fade state
   private prevMode: VisualizerMode | null = null
   private fadeFrame = 0
-  private FADE_FRAMES = 30
+  private FADE_FRAMES = 8
 
   mount(canvas: HTMLCanvasElement): void {
     this.canvas = canvas
@@ -31,14 +36,29 @@ class VisualizerEngine {
     this.offscreen = document.createElement('canvas')
     this.handleResize()
     window.addEventListener('resize', this.handleResize)
-    this.start()
+    // Don't start loop here — setActive(true) controls it
   }
 
   unmount(): void {
     this.stop()
+    this.active = false
     window.removeEventListener('resize', this.handleResize)
     this.canvas = null
     this.ctx = null
+  }
+
+  setActive(v: boolean): void {
+    if (this.active === v) return
+    this.active = v
+    if (v) {
+      this.start()
+    } else {
+      this.stop()
+      if (this.ctx && this.canvas) {
+        const dpr = window.devicePixelRatio || 1
+        this.ctx.clearRect(0, 0, this.canvas.width / dpr, this.canvas.height / dpr)
+      }
+    }
   }
 
   setMode(mode: VisualizerMode): void {
@@ -59,6 +79,10 @@ class VisualizerEngine {
 
   getSensitivity(): number {
     return this.sensitivity
+  }
+
+  setCanvasTheme(theme: CanvasTheme): void {
+    this.canvasTheme = theme
   }
 
   private handleResize = (): void => {
@@ -131,24 +155,25 @@ class VisualizerEngine {
     w: number,
     h: number,
   ): void {
+    const t = this.canvasTheme
     switch (mode) {
       case 'bars':
-        drawBarSpectrum(ctx, freqData, w, h, this.sensitivity)
+        drawBarSpectrum(ctx, freqData, w, h, this.sensitivity, t)
         break
       case 'circular':
-        drawCircularWave(ctx, freqData, w, h, this.sensitivity, this.rotation)
+        drawCircularWave(ctx, freqData, w, h, this.sensitivity, this.rotation, t)
         break
       case 'oscilloscope':
-        drawOscilloscopeWave(ctx, timeData, w, h)
+        drawOscilloscopeWave(ctx, timeData, w, h, t)
         break
       case 'particles':
-        drawParticleField(ctx, freqData, w, h, this.sensitivity)
+        drawParticleField(ctx, freqData, w, h, this.sensitivity, t)
         break
       case 'tunnel':
-        drawTunnel(ctx, freqData, w, h, this.sensitivity, this.rotation)
+        drawTunnel(ctx, freqData, w, h, this.sensitivity, this.rotation, t)
         break
       case 'aurora':
-        drawAurora(ctx, timeData, freqData, w, h)
+        drawAurora(ctx, timeData, freqData, w, h, t)
         break
     }
   }
@@ -172,10 +197,10 @@ class VisualizerEngine {
     const mid = midSum / (len * 0.4 * 255)
     const treble = trebleSum / (len * 0.5 * 255)
 
-    // Blend between hues: bass=0° (red), mid=270° (purple), treble=180° (cyan)
-    const dominantHue = bass > mid && bass > treble ? 0
-      : mid > treble ? 270
-      : 180
+    const t = this.canvasTheme
+    const dominantHue = bass > mid && bass > treble ? t.hueMin
+      : mid > treble ? (t.hueMin + t.hueMax) / 2
+      : t.hueMax
     const energy = Math.max(bass, mid, treble) * 0.3
 
     if (!energy || energy < 0.01) return
@@ -186,7 +211,9 @@ class VisualizerEngine {
 
     ctx.save()
     ctx.fillStyle = grad
-    ctx.filter = 'blur(40px)'
+    if (!this.isMobile) {
+      ctx.filter = 'blur(20px)'
+    }
     ctx.fillRect(0, 0, w, h)
     ctx.filter = 'none'
     ctx.restore()

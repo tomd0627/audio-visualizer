@@ -1,8 +1,11 @@
 import { useEffect, useRef } from 'react'
+import { useAppStore } from '../../store/useAppStore'
 import { visualizerEngine } from '../../visualizer/VisualizerEngine'
 
 export function VisualizerCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const audioStarted = useAppStore((s) => s.audioStarted)
+  const currentTrack = useAppStore((s) => s.currentTrack)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -10,6 +13,10 @@ export function VisualizerCanvas() {
     visualizerEngine.mount(canvas)
     return () => visualizerEngine.unmount()
   }, [])
+
+  useEffect(() => {
+    visualizerEngine.setActive(audioStarted || currentTrack !== null)
+  }, [audioStarted, currentTrack])
 
   return (
     <canvas

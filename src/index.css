@@ -18,6 +18,65 @@ body,
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+/* Default theme tokens (Solar) — overridden by JS via applyThemeToDom */
+:root {
+  --theme-bg: #0a0600;
+  --theme-primary: #ff6b00;
+  --theme-primary-rgb: 255, 107, 0;
+  --theme-accent: #ff3d00;
+  --theme-accent-rgb: 255, 61, 0;
+}
+
+/* Semantic theme utility classes */
+.theme-text { color: var(--theme-primary); }
+.theme-icon { color: rgba(var(--theme-primary-rgb), 0.6); }
+
+.theme-search-box {
+  border-color: rgba(var(--theme-primary-rgb), 0.3);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.theme-search-box:focus-within {
+  border-color: rgba(var(--theme-primary-rgb), 0.7);
+  box-shadow: 0 0 12px rgba(var(--theme-primary-rgb), 0.2);
+}
+
+.theme-play-btn {
+  background: rgba(var(--theme-primary-rgb), 0.3);
+  box-shadow: 0 10px 15px -3px rgba(var(--theme-primary-rgb), 0.2), 0 4px 6px -4px rgba(var(--theme-primary-rgb), 0.2);
+}
+.theme-play-btn:hover {
+  background: rgba(var(--theme-primary-rgb), 0.5);
+}
+
+.theme-mode-active {
+  background: rgba(var(--theme-primary-rgb), 0.2);
+  color: var(--theme-primary);
+  border-color: rgba(var(--theme-primary-rgb), 0.4);
+}
+
+.theme-badge {
+  background: rgba(var(--theme-accent-rgb), 0.2);
+  color: var(--theme-accent);
+  border-color: rgba(var(--theme-accent-rgb), 0.3);
+}
+
+.theme-browse-btn {
+  background: rgba(var(--theme-primary-rgb), 0.2);
+  color: var(--theme-primary);
+  border-color: rgba(var(--theme-primary-rgb), 0.3);
+}
+.theme-browse-btn:hover {
+  background: rgba(var(--theme-primary-rgb), 0.3);
+}
+
+.theme-autocomplete-box {
+  border-color: rgba(var(--theme-primary-rgb), 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 16px rgba(var(--theme-primary-rgb), 0.08);
+}
+.theme-autocomplete-selected {
+  background: rgba(var(--theme-primary-rgb), 0.15);
+}
+
 /* Range input track styling */
 input[type='range'] {
   -webkit-appearance: none;
@@ -34,12 +93,22 @@ input[type='range']::-webkit-slider-thumb {
   appearance: none;
 }
 
+/* Keyboard focus indicator */
+:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.65);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.01ms;
-    animation-iteration-count: 1;
-    transition-duration: 0.01ms;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    /* Nullify Tailwind scale transforms (hover:scale-*, active:scale-*) */
+    --tw-scale-x: 1 !important;
+    --tw-scale-y: 1 !important;
   }
 }
 

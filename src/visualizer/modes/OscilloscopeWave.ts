@@ -1,16 +1,19 @@
+import type { CanvasTheme } from '../../themes/themes'
+
 export function drawOscilloscopeWave(
   ctx: CanvasRenderingContext2D,
   timeData: Uint8Array,
   width: number,
   height: number,
+  theme: CanvasTheme,
 ): void {
   const sliceWidth = width / timeData.length
   const midY = height / 2
 
   ctx.save()
   ctx.shadowBlur = 8
-  ctx.shadowColor = '#ff6b00'
-  ctx.strokeStyle = 'rgba(255, 107, 0, 0.9)'
+  ctx.shadowColor = theme.shadowColor
+  ctx.strokeStyle = theme.strokeColor
   ctx.lineWidth = 2
   ctx.lineJoin = 'round'
 

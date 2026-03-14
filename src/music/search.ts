@@ -37,7 +37,7 @@ export async function searchTracks(query: string): Promise<TrackResult[]> {
     limit: '10',
   })
 
-  const res = await fetch(`https://itunes.apple.com/search?${params}`)
+  const res = await fetch(`/api/search?${params}`)
 
   if (!res.ok) {
     throw new Error(`Search failed: ${res.status}`)

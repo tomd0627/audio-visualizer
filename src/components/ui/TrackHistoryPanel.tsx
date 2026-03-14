@@ -1,4 +1,5 @@
 import { ClockCounterClockwise, MusicNote, X } from '@phosphor-icons/react'
+import { useEffect, useRef } from 'react'
 import type { TrackInfo } from '../../audio/types'
 import { useAudioEngine } from '../../hooks/useAudioEngine'
 import { useAppStore } from '../../store/useAppStore'
@@ -6,6 +7,35 @@ import { useAppStore } from '../../store/useAppStore'
 export function TrackHistoryPanel() {
   const { showHistory, toggleHistory, history } = useAppStore()
   const { loadPreview } = useAudioEngine()
+  const panelRef = useRef<HTMLDivElement>(null)
+  const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const prevFocusRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (showHistory) {
+      prevFocusRef.current = document.activeElement as HTMLElement
+      closeBtnRef.current?.focus()
+    } else {
+      prevFocusRef.current?.focus()
+      prevFocusRef.current = null
+    }
+  }, [showHistory])
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') { toggleHistory(); return }
+    if (e.key !== 'Tab' || !panelRef.current) return
+    const focusable = Array.from(panelRef.current.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    ))
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    if (!first || !last) return
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus()
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus()
+    }
+  }
 
   const handleSelect = (track: TrackInfo) => {
     if (track.sourceType === 'preview' && track.previewUrl) {
@@ -28,10 +58,12 @@ export function TrackHistoryPanel() {
 
       {/* Slide-in panel */}
       <div
+        ref={panelRef}
         role="dialog"
         aria-label="Recent Tracks"
         aria-modal="true"
         aria-hidden={!showHistory}
+        onKeyDown={handleKeyDown}
         className={`
           fixed top-0 right-0 h-full w-72 z-40
           border-l border-white/10 bg-black/80 backdrop-blur-xl
@@ -42,6 +74,7 @@ export function TrackHistoryPanel() {
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           <h2 className="text-white font-semibold text-sm">Recent Tracks</h2>
           <button
+            ref={closeBtnRef}
             type="button"
             aria-label="Close history panel"
             onClick={toggleHistory}
@@ -84,7 +117,7 @@ export function TrackHistoryPanel() {
                       <span className={`text-xs px-1.5 py-0.5 rounded ${
                         track.sourceType === 'file'
                           ? 'bg-white/10 text-white/40'
-                          : 'bg-[#ff3d00]/20 text-[#ff3d00]'
+                          : 'theme-badge'
                       }`}>
                         {track.sourceType === 'file' ? 'file' : '30s'}
                       </span>

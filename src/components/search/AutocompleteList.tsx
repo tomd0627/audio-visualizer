@@ -50,7 +50,7 @@ export function AutocompleteList({ results, loading, error, onClose }: Props) {
 
   return (
     <div className="absolute top-full left-0 right-0 mt-1 z-50">
-      <div className="rounded-xl border border-[#ff6b00]/30 bg-black/80 backdrop-blur-md overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_16px_rgba(255,107,0,0.08)]">
+      <div className="rounded-xl border bg-black/80 backdrop-blur-md overflow-hidden theme-autocomplete-box">
         {loading && (
           <div className="px-4 py-3 text-white/50 text-sm">Searching...</div>
         )}
@@ -69,14 +69,14 @@ export function AutocompleteList({ results, loading, error, onClose }: Props) {
                   onMouseEnter={() => setSelectedIdx(i)}
                   className={`
                     w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors
-                    ${i === selectedIdx ? 'bg-[#ff6b00]/15' : 'hover:bg-white/5'}
+                    ${i === selectedIdx ? 'theme-autocomplete-selected' : 'hover:bg-white/5'}
                   `}
                 >
                   {result.artworkUrl ? (
                     <img
                       src={result.artworkUrl}
                       alt={result.album}
-                      loading="lazy"
+                      loading="eager"
                       decoding="async"
                       className="w-10 h-10 rounded object-cover flex-shrink-0"
                     />

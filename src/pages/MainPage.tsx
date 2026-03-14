@@ -1,4 +1,5 @@
-import { Sparkle, X } from '@phosphor-icons/react'
+import { Sparkle, UploadSimple, X } from '@phosphor-icons/react'
+import { useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { PlaybackControls } from '../components/playback/PlaybackControls'
 import { SeekBar } from '../components/playback/SeekBar'
@@ -6,13 +7,29 @@ import { VolumeSlider } from '../components/playback/VolumeSlider'
 import { SearchBar } from '../components/search/SearchBar'
 import { GlassPanel } from '../components/ui/GlassPanel'
 import { SensitivitySlider } from '../components/ui/SensitivitySlider'
-import { TrackHistoryPanel, HistoryButton } from '../components/ui/TrackHistoryPanel'
+import { ThemeSwitcher } from '../components/ui/ThemeSwitcher'
+import { HistoryButton, TrackHistoryPanel } from '../components/ui/TrackHistoryPanel'
 import { TrackInfo } from '../components/ui/TrackInfo'
 import { VisualizerModeSelector } from '../components/ui/VisualizerModeSelector'
 import { VisualizerCanvas } from '../components/visualizer/VisualizerCanvas'
 import { useAudioEngine } from '../hooks/useAudioEngine'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useAppStore } from '../store/useAppStore'
+
+function Announcer() {
+  const { currentTrack, isPlaying } = useAppStore()
+  const [msg, setMsg] = useState('')
+
+  useEffect(() => {
+    if (currentTrack) setMsg(`Now playing: ${currentTrack.title} by ${currentTrack.artist}`)
+  }, [currentTrack])
+
+  useEffect(() => {
+    if (currentTrack) setMsg(isPlaying ? 'Playing' : 'Paused')
+  }, [isPlaying, currentTrack])
+
+  return <output aria-live="polite" aria-atomic="true" className="sr-only">{msg}</output>
+}
 
 export function MainPage() {
   const { currentTrack, audioStarted, setAudioStarted } = useAppStore()
@@ -39,22 +56,29 @@ export function MainPage() {
 
       {/* Drag overlay */}
       {isDragActive && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 border-2 border-dashed border-[#ff6b00] pointer-events-none">
-          <p className="text-[#ff6b00] text-2xl font-semibold">Drop to load track</p>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 border-2 border-dashed pointer-events-none"
+          style={{ borderColor: 'var(--theme-primary)' }}
+        >
+          <p className="text-2xl font-semibold theme-text">Drop to load track</p>
         </div>
       )}
 
       {/* Audio context gate */}
       {!audioStarted && !currentTrack && (
         <div className="fixed inset-0 z-20 flex flex-col items-center justify-center pointer-events-none">
-          <div className="text-center pointer-events-auto">
-            <div className="mb-6 flex justify-center">
-              <Sparkle size={64} weight="duotone" className="text-[#ff6b00]" />
+          <div className="text-center pointer-events-auto flex flex-col items-center">
+            <div className="mb-4 flex justify-center">
+              <Sparkle size={48} weight="duotone" className="theme-text" />
             </div>
-            <p className="text-[#ff6b00] text-3xl font-semibold mb-2">Resonance</p>
-            <p className="text-white/50 text-sm mb-8">Drop a track or search to watch your music come alive</p>
-            <label className="cursor-pointer px-6 py-3 rounded-xl bg-[#ff6b00]/20 hover:bg-[#ff6b00]/30 text-[#ff6b00] border border-[#ff6b00]/30 transition-colors text-sm font-medium">
-              Browse Files
+            <p className="text-3xl font-semibold mb-1 theme-text">Resonance</p>
+            <p className="text-white/40 text-sm mb-8">Search for a track above, or load a local file below</p>
+            <label className="group cursor-pointer flex flex-col items-center gap-3 px-12 py-8 rounded-2xl border-2 border-dashed transition-all duration-200 theme-browse-btn" style={{ borderStyle: 'dashed' }}>
+              <UploadSimple size={36} weight="duotone" className="theme-icon transition-colors duration-200" />
+              <div>
+                <p className="text-sm font-semibold theme-text">Drag &amp; drop an audio file</p>
+                <p className="text-white/40 text-xs mt-0.5 text-center">or click to browse — MP3, WAV, FLAC, OGG</p>
+              </div>
               <input
                 type="file"
                 accept="audio/*"
@@ -112,15 +136,21 @@ export function MainPage() {
             </div>
           )}
 
-          {/* Visualizer mode selector */}
-          <GlassPanel className="px-3 py-2">
+          {/* Visualizer mode selector + theme switcher */}
+          <GlassPanel className="px-3 py-2 flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
             <VisualizerModeSelector />
+            <div className="sm:hidden w-full h-px bg-white/20" />
+            <div className="hidden sm:block w-px h-4 bg-white/20 flex-shrink-0" />
+            <ThemeSwitcher />
           </GlassPanel>
         </div>
       </div>
 
       {/* Track history slide-in */}
       <TrackHistoryPanel />
+
+      {/* Screen reader announcements */}
+      <Announcer />
     </div>
   )
 }

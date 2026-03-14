@@ -1,3 +1,5 @@
+import type { CanvasTheme } from '../../themes/themes'
+
 // Two mirrored waveform ribbons with a glowing fill between them.
 // Upper and lower bands shift in hue based on dominant frequency energy.
 export function drawAurora(
@@ -6,13 +8,14 @@ export function drawAurora(
   freqData: Uint8Array,
   width: number,
   height: number,
+  theme: CanvasTheme,
 ): void {
   const midY = height / 2
   const spread = height * 0.28
   const len = timeData.length
   const step = width / (len - 1)
 
-  // Dominant hue from frequency energy (bass=cyan, mid=purple, treble=pink)
+  // Dominant hue from frequency energy
   let bassSum = 0, midSum = 0, trebleSum = 0
   for (let i = 0; i < freqData.length; i++) {
     const v = freqData[i] ?? 0
@@ -23,9 +26,9 @@ export function drawAurora(
   const bass = bassSum / (freqData.length * 0.1 * 255)
   const mid = midSum / (freqData.length * 0.4 * 255)
   const treble = trebleSum / (freqData.length * 0.5 * 255)
-  const hue = bass > mid && bass > treble ? 15
-    : mid > treble ? 30
-    : 48
+  const hue = bass > mid && bass > treble ? theme.auroraHueBass
+    : mid > treble ? theme.auroraHueMid
+    : theme.auroraHueTreble
 
   // Build upper and lower wave paths
   const upper: [number, number][] = []
@@ -65,7 +68,7 @@ export function drawAurora(
   for (let i = 1; i < upper.length; i++) ctx.lineTo(upper[i]![0], upper[i]![1])
   ctx.stroke()
 
-  // Lower stroke (complementary hue)
+  // Lower stroke (offset hue)
   const hue2 = (hue + 60) % 360
   ctx.shadowColor = `hsla(${hue2}, 100%, 65%, 0.8)`
   ctx.strokeStyle = `hsla(${hue2}, 100%, 72%, 0.85)`

@@ -1,3 +1,5 @@
+import type { CanvasTheme } from '../../themes/themes'
+
 interface Particle {
   x: number
   y: number
@@ -12,7 +14,7 @@ interface Particle {
 const particles: Particle[] = []
 const MAX_PARTICLES = 300
 
-function spawnParticle(cx: number, cy: number, energy: number): void {
+function spawnParticle(cx: number, cy: number, energy: number, theme: CanvasTheme): void {
   if (particles.length >= MAX_PARTICLES) return
   const angle = Math.random() * Math.PI * 2
   const speed = (0.5 + Math.random() * 2) * energy
@@ -25,7 +27,7 @@ function spawnParticle(cx: number, cy: number, energy: number): void {
     life,
     maxLife: life,
     size: 1 + Math.random() * 3,
-    hue: 10 + Math.random() * 40, // ember to yellow range
+    hue: theme.hueMin + Math.random() * (theme.hueMax - theme.hueMin),
   })
 }
 
@@ -35,6 +37,7 @@ export function drawParticleField(
   width: number,
   height: number,
   sensitivity: number,
+  theme: CanvasTheme,
 ): void {
   const cx = width / 2
   const cy = height / 2
@@ -47,7 +50,7 @@ export function drawParticleField(
   // Spawn particles on bass hit
   const spawnCount = Math.floor(bassEnergy * 8)
   for (let i = 0; i < spawnCount; i++) {
-    spawnParticle(cx, cy, bassEnergy)
+    spawnParticle(cx, cy, bassEnergy, theme)
   }
 
   // Update and draw particles

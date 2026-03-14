@@ -24,7 +24,7 @@ export function TrackInfo() {
         <div className="flex items-center gap-2">
           <p className="text-white font-medium text-sm truncate">{currentTrack.title}</p>
           {currentTrack.sourceType === 'preview' && (
-            <span className="flex-shrink-0 text-xs bg-[#ff3d00]/20 text-[#ff3d00] border border-[#ff3d00]/30 px-1.5 py-0.5 rounded text-[10px]">
+            <span className="flex-shrink-0 text-xs border px-1.5 py-0.5 rounded text-[10px] theme-badge">
               30s
             </span>
           )}

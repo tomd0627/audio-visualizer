@@ -1,6 +1,6 @@
-import { visualizerEngine } from '../../visualizer/VisualizerEngine'
-import { useAppStore } from '../../store/useAppStore'
 import type { VisualizerMode } from '../../audio/types'
+import { useAppStore } from '../../store/useAppStore'
+import { visualizerEngine } from '../../visualizer/VisualizerEngine'
 
 const MODES: { mode: VisualizerMode; label: string; key: string }[] = [
   { mode: 'bars', label: 'Bars', key: '1' },
@@ -30,7 +30,7 @@ export function VisualizerModeSelector() {
           className={`
             px-2 py-1 rounded text-xs font-medium transition-all duration-150
             ${visualizerMode === mode
-              ? 'bg-[#ff6b00]/20 text-[#ff6b00] border border-[#ff6b00]/40'
+              ? 'border theme-mode-active'
               : 'text-white/60 hover:text-white border border-transparent hover:border-white/30'
             }
           `}

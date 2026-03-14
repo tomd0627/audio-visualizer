@@ -92,9 +92,13 @@ export class FilePlayer implements AudioSource {
   }
 
   private startTimeUpdater(): void {
-    const tick = () => {
+    let lastEmit = 0
+    const tick = (now: number) => {
       if (!this.playing) return
-      this.onTimeUpdateCallbacks.forEach((cb) => cb(this.getCurrentTime()))
+      if (now - lastEmit >= 250) {
+        lastEmit = now
+        this.onTimeUpdateCallbacks.forEach((cb) => { cb(this.getCurrentTime()) })
+      }
       this.rafId = requestAnimationFrame(tick)
     }
     this.rafId = requestAnimationFrame(tick)

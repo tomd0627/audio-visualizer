@@ -29,7 +29,7 @@ export function FileDropZone() {
         fixed inset-0 flex flex-col items-center justify-center cursor-pointer
         transition-all duration-200 z-20
         ${isDragActive
-          ? 'bg-black/70 border-2 border-dashed border-[#ff6b00]'
+          ? 'bg-black/70 border-2 border-dashed'
           : currentTrack ? 'pointer-events-none' : 'bg-black/80'
         }
       `}
@@ -38,16 +38,16 @@ export function FileDropZone() {
       {!currentTrack && (
         <div className="text-center pointer-events-none select-none">
           <div className="mb-4 flex justify-center">
-            <MusicNote size={56} weight="duotone" className="text-[#ff6b00]/60" />
+            <MusicNote size={56} weight="duotone" className="theme-icon" />
           </div>
-          <p className="text-[#ff6b00] text-2xl font-semibold mb-2">Drop an audio file</p>
+          <p className="text-2xl font-semibold mb-2 theme-text">Drop an audio file</p>
           <p className="text-white/50 text-sm">or click to browse — MP3, WAV, FLAC, OGG</p>
           <p className="text-white/30 text-sm mt-4">or search for a track above</p>
         </div>
       )}
       {isDragActive && currentTrack && (
         <div className="text-center pointer-events-none select-none">
-          <p className="text-[#ff6b00] text-xl font-semibold">Drop to load new track</p>
+          <p className="text-xl font-semibold theme-text">Drop to load new track</p>
         </div>
       )}
     </div>

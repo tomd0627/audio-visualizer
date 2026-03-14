@@ -1,3 +1,5 @@
+import type { CanvasTheme } from '../../themes/themes'
+
 // Radial frequency bars shooting outward from center.
 // Each bar maps to a frequency bin; bass bins are thicker and brighter.
 export function drawTunnel(
@@ -7,6 +9,7 @@ export function drawTunnel(
   height: number,
   sensitivity: number,
   rotation: number,
+  theme: CanvasTheme,
 ): void {
   const cx = width / 2
   const cy = height / 2
@@ -35,8 +38,7 @@ export function drawTunnel(
     if (barLen < 1) continue
 
     const t = avg / 255
-    // Ember (low) → yellow (high)
-    const hue = 10 + t * 40
+    const hue = theme.hueMin + t * (theme.hueMax - theme.hueMin)
     const color = `hsla(${hue}, 100%, 65%, 0.9)`
 
     ctx.shadowColor = color
@@ -56,8 +58,8 @@ export function drawTunnel(
 
   // Solid inner circle
   ctx.shadowBlur = 20
-  ctx.shadowColor = 'rgba(255, 107, 0, 0.6)'
-  ctx.strokeStyle = 'rgba(255, 107, 0, 0.5)'
+  ctx.shadowColor = theme.innerCircleShadow
+  ctx.strokeStyle = theme.innerCircle
   ctx.lineWidth = 1.5
   ctx.beginPath()
   ctx.arc(cx, cy, innerRadius, 0, Math.PI * 2)

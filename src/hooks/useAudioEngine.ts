@@ -10,7 +10,13 @@ export function useAudioEngine() {
 
   const loadFile = useCallback(async (file: File) => {
     setAudioStarted(true)
-    const player = await decodeFile(file)
+    let player: InstanceType<typeof FilePlayer>
+    try {
+      player = await decodeFile(file)
+    } catch {
+      setAudioStarted(false)
+      return
+    }
 
     const trackInfo: TrackInfo = {
       id: `file-${file.name}-${file.size}`,
@@ -95,6 +101,7 @@ export function useAudioEngine() {
     }
     source.seek(0)
     setCurrentTime(0)
+    audioEngine.suspend()
   }, [setIsPlaying, setCurrentTime])
 
   const changeVolume = useCallback((level: number) => {
@@ -119,6 +126,7 @@ export function useAudioEngine() {
       if (source.isPlaying()) source.pause()
       source.seek(0)
     }
+    audioEngine.suspend()
     useAppStore.getState().setCurrentTrack(null)
     setIsPlaying(false)
     setCurrentTime(0)
