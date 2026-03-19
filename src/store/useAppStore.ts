@@ -40,6 +40,7 @@ interface AppState {
   // Track history
   history: HistoryEntry[]
   addToHistory: (track: TrackInfo) => void
+  clearHistory: () => void
 
   // Audio context started
   audioStarted: boolean
@@ -100,6 +101,10 @@ export const useAppStore = create<AppState>((set) => ({
       localStorage.setItem('track_history', JSON.stringify(next))
       return { history: next }
     })
+  },
+  clearHistory: () => {
+    localStorage.removeItem('track_history')
+    set({ history: [] })
   },
 
   audioStarted: false,

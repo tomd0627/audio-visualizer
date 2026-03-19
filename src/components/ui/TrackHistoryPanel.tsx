@@ -5,7 +5,7 @@ import { useAudioEngine } from '../../hooks/useAudioEngine'
 import { useAppStore } from '../../store/useAppStore'
 
 export function TrackHistoryPanel() {
-  const { showHistory, toggleHistory, history } = useAppStore()
+  const { showHistory, toggleHistory, history, clearHistory } = useAppStore()
   const { loadPreview } = useAudioEngine()
   const panelRef = useRef<HTMLDivElement>(null)
   const closeBtnRef = useRef<HTMLButtonElement>(null)
@@ -73,15 +73,27 @@ export function TrackHistoryPanel() {
       >
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           <h2 className="text-white font-semibold text-sm">Recent Tracks</h2>
-          <button
-            ref={closeBtnRef}
-            type="button"
-            aria-label="Close history panel"
-            onClick={toggleHistory}
-            className="text-white/40 hover:text-white/70 transition-colors"
-          >
-            <X size={14} />
-          </button>
+          <div className="flex items-center gap-2">
+            {history.length > 0 && (
+              <button
+                type="button"
+                aria-label="Clear history"
+                onClick={clearHistory}
+                className="text-white/30 hover:text-white/60 text-xs transition-colors"
+              >
+                Clear
+              </button>
+            )}
+            <button
+              ref={closeBtnRef}
+              type="button"
+              aria-label="Close history panel"
+              onClick={toggleHistory}
+              className="text-white/40 hover:text-white/70 transition-colors"
+            >
+              <X size={14} />
+            </button>
+          </div>
         </div>
 
         <div className="overflow-y-auto h-full pb-20">
