@@ -10,8 +10,8 @@ class AudioEngine {
   private gainNode: GainNode | null = null
   private source: AudioSource | null = null
 
-  private freqData: Uint8Array = new Uint8Array(0)
-  private timeData: Uint8Array = new Uint8Array(0)
+  private freqData = new Uint8Array(0)
+  private timeData = new Uint8Array(0)
 
   private _volume = 1
   private _isMuted = false

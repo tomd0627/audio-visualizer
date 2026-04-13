@@ -41,10 +41,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ['react', 'react-dom'],
-          icons: ['@phosphor-icons/react'],
-          dropzone: ['react-dropzone'],
+        manualChunks(id) {
+          if (id.includes('react-dom') || id.includes('node_modules/react/')) return 'react'
+          if (id.includes('@phosphor-icons')) return 'icons'
+          if (id.includes('react-dropzone')) return 'dropzone'
         },
       },
     },
