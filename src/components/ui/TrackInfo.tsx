@@ -1,5 +1,6 @@
 import { MusicNote } from '@phosphor-icons/react'
 import { useAppStore } from '../../store/useAppStore'
+import { formatDuration } from '../../utils/format'
 
 export function TrackInfo() {
   const currentTrack = useAppStore((s) => s.currentTrack)
@@ -25,7 +26,7 @@ export function TrackInfo() {
           <p className="text-white font-medium text-sm truncate">{currentTrack.title}</p>
           {currentTrack.sourceType === 'preview' && (
             <span className="flex-shrink-0 text-xs border px-1.5 py-0.5 rounded text-[10px] theme-badge">
-              30s
+              {currentTrack.duration > 0 ? formatDuration(currentTrack.duration) : 'preview'}
             </span>
           )}
         </div>

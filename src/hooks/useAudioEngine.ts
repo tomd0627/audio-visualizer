@@ -2,8 +2,8 @@ import { useCallback } from 'react'
 import { audioEngine } from '../audio/AudioEngine'
 import { decodeFile, FilePlayer } from '../audio/FileDecoder'
 import { PreviewPlayer } from '../audio/PreviewPlayer'
-import { useAppStore } from '../store/useAppStore'
 import type { TrackInfo } from '../audio/types'
+import { useAppStore } from '../store/useAppStore'
 
 export function useAudioEngine() {
   const { setIsPlaying, setCurrentTime, setDuration, setVolume, setIsMuted, setAudioStarted, addToHistory } = useAppStore()
@@ -61,13 +61,7 @@ export function useAudioEngine() {
     useAppStore.getState().setCurrentTrack(trackInfo)
     addToHistory(trackInfo)
 
-    // Duration isn't always available immediately from HTMLAudioElement
-    const getDur = () => {
-      const d = player.getDuration()
-      setDuration(d > 0 ? d : trackInfo.duration)
-    }
-    getDur()
-    setTimeout(getDur, 500)
+    player.onDurationChange((d) => setDuration(d))
 
     setCurrentTime(0)
     setIsPlaying(false)
@@ -82,6 +76,7 @@ export function useAudioEngine() {
       source.pause()
       setIsPlaying(false)
     } else {
+      audioEngine.resume()
       await source.play()
       setIsPlaying(true)
     }

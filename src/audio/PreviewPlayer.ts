@@ -10,6 +10,7 @@ export class PreviewPlayer implements AudioSource {
   private mediaSource: MediaElementAudioSourceNode | null = null
   private onEndedCallbacks: (() => void)[] = []
   private onTimeUpdateCallbacks: ((t: number) => void)[] = []
+  private onDurationChangeCallbacks: ((d: number) => void)[] = []
   private connected = false
 
   constructor(previewUrl: string) {
@@ -23,6 +24,10 @@ export class PreviewPlayer implements AudioSource {
     })
     this.audio.addEventListener('timeupdate', () => {
       this.onTimeUpdateCallbacks.forEach((cb) => cb(this.audio.currentTime))
+    })
+    this.audio.addEventListener('durationchange', () => {
+      const d = this.getDuration()
+      if (d > 0) this.onDurationChangeCallbacks.forEach((cb) => { cb(d) })
     })
   }
 
@@ -74,11 +79,21 @@ export class PreviewPlayer implements AudioSource {
     this.onTimeUpdateCallbacks.push(cb)
   }
 
+  onDurationChange(cb: (d: number) => void): void {
+    const known = this.getDuration()
+    if (known > 0) {
+      cb(known)
+    } else {
+      this.onDurationChangeCallbacks.push(cb)
+    }
+  }
+
   destroy(): void {
     this.audio.pause()
     this.audio.src = ''
     this.mediaSource?.disconnect()
     this.onEndedCallbacks = []
     this.onTimeUpdateCallbacks = []
+    this.onDurationChangeCallbacks = []
   }
 }

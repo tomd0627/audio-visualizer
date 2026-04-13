@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import type { TrackInfo } from '../../audio/types'
 import { useAudioEngine } from '../../hooks/useAudioEngine'
 import { useAppStore } from '../../store/useAppStore'
+import { formatDuration } from '../../utils/format'
 
 export function TrackHistoryPanel() {
   const { showHistory, toggleHistory, history, clearHistory } = useAppStore()
@@ -131,7 +132,7 @@ export function TrackHistoryPanel() {
                           ? 'bg-white/10 text-white/40'
                           : 'theme-badge'
                       }`}>
-                        {track.sourceType === 'file' ? 'file' : '30s'}
+                        {track.sourceType === 'file' ? 'file' : track.duration > 0 ? formatDuration(track.duration) : 'preview'}
                       </span>
                     </div>
                   </button>
