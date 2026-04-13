@@ -33,7 +33,8 @@ function Announcer() {
 
 export function MainPage() {
   const { currentTrack, audioStarted, setAudioStarted } = useAppStore()
-  const { loadFile, unload } = useAudioEngine()
+  const { loadFile, loadDemoTrack, unload } = useAudioEngine()
+  const [showTechNote, setShowTechNote] = useState(false)
   useKeyboardShortcuts()
 
   // Global drop zone (when a track is already loaded, support drag-to-replace)
@@ -89,6 +90,13 @@ export function MainPage() {
                 }}
               />
             </label>
+            <button
+              type="button"
+              onClick={() => { setAudioStarted(true); void loadDemoTrack() }}
+              className="mt-4 px-5 py-2 rounded-full text-sm font-semibold theme-text border border-white/20 hover:border-white/50 bg-white/5 hover:bg-white/10 transition-all"
+            >
+              Try Demo →
+            </button>
           </div>
         </div>
       )}
@@ -100,8 +108,8 @@ export function MainPage() {
         </div>
       </div>
 
-      {/* Layer 10: UI */}
-      <div className="fixed inset-0 z-10 pointer-events-none flex flex-col">
+      {/* Layer z-[25]: UI controls — above empty state gate (z-20), below search bar (z-30) */}
+      <div className="fixed inset-0 z-[25] pointer-events-none flex flex-col">
         {/* Top bar spacer (SearchBar is now in its own layer above) */}
         <div className="h-16" />
 
@@ -136,13 +144,42 @@ export function MainPage() {
             </div>
           )}
 
-          {/* Visualizer mode selector + theme switcher */}
-          <GlassPanel className="px-3 py-2 flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
-            <VisualizerModeSelector />
-            <div className="sm:hidden w-full h-px bg-white/20" />
-            <div className="hidden sm:block w-px h-4 bg-white/20 flex-shrink-0" />
-            <ThemeSwitcher />
-          </GlassPanel>
+          {/* Tech note (collapsible) */}
+          {showTechNote && (
+            <GlassPanel className="w-full max-w-2xl px-5 py-4 text-sm text-white/70 leading-relaxed">
+              <p className="font-semibold theme-text mb-1">How it works</p>
+              <p>
+                Resonance uses the Web Audio API&apos;s <code className="text-white/90">AnalyserNode</code> to
+                run a real-time Fast Fourier Transform (FFT) on the audio signal, producing 1024 frequency
+                bins spanning ~20 Hz to 20 kHz. Bins are grouped into bass (0–250 Hz), mid (250–4 kHz), and
+                treble (4–20 kHz) bands. Each visualizer mode maps these bands differently: Bars and Tunnel
+                use logarithmic bin scaling so bass frequencies get more visual weight; Particles spawn on
+                bass transients above an energy threshold; Aurora shifts hue continuously based on the
+                dominant band energy; Oscilloscope and Circle draw the raw time-domain waveform rather than
+                frequency data.
+              </p>
+            </GlassPanel>
+          )}
+
+          {/* Visualizer mode selector + theme switcher + tech note toggle */}
+          <div className="flex items-center gap-2">
+            <GlassPanel className="px-3 py-2 flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+              <VisualizerModeSelector />
+              <div className="sm:hidden w-full h-px bg-white/20" />
+              <div className="hidden sm:block w-px h-4 bg-white/20 flex-shrink-0" />
+              <ThemeSwitcher />
+            </GlassPanel>
+            <button
+              type="button"
+              onClick={() => setShowTechNote(v => !v)}
+              title="How it works"
+              aria-label="Toggle technical explanation"
+              aria-expanded={showTechNote}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold border border-white/20 hover:border-white/50 bg-gray-900/90 hover:bg-gray-800 theme-text transition-all flex-shrink-0"
+            >
+              ?
+            </button>
+          </div>
         </div>
       </div>
 

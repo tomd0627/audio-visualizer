@@ -114,6 +114,18 @@ export function useAudioEngine() {
     setIsMuted(muted)
   }, [setIsMuted])
 
+  const loadDemoTrack = useCallback(async () => {
+    const demoTrack: TrackInfo = {
+      id: 'demo',
+      title: 'Demo Track',
+      artist: 'Resonance',
+      duration: 0,
+      sourceType: 'preview',
+      previewUrl: '/demo.mp3',
+    }
+    await loadPreview(demoTrack)
+  }, [loadPreview])
+
   const reloadTrack = useCallback(async (track: TrackInfo) => {
     if (track.sourceType === 'preview' && track.previewUrl) {
       await loadPreview(track)
@@ -134,7 +146,7 @@ export function useAudioEngine() {
     setAudioStarted(false)
   }, [setIsPlaying, setCurrentTime, setDuration, setAudioStarted])
 
-  return { loadFile, loadPreview, togglePlay, seek, stop, unload, changeVolume, toggleMute, reloadTrack }
+  return { loadFile, loadPreview, loadDemoTrack, togglePlay, seek, stop, unload, changeVolume, toggleMute, reloadTrack }
 }
 
 // Expose FilePlayer type for instanceof checks
