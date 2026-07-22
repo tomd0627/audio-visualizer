@@ -10,22 +10,22 @@
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-dropzone": "^15.0.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-dropzone": "^19.1.1",
     "react-router-dom": "^7.18.1",
     "use-debounce": "^10.1.1",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.2",
-    "@types/node": "^26.1.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
-    "postcss": "^8.5.16",
-    "tailwindcss": "^4.3.2",
-    "typescript": "^6.0.3",
-    "vite": "^8.1.3"
+    "@vitejs/plugin-react": "^6.0.4",
+    "postcss": "^8.5.22",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5"
   }
 }
